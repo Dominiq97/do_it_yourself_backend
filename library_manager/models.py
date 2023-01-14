@@ -1,4 +1,5 @@
 from django.db import models
+from seller.models import Seller
 
 class Publisher(models.Model):
     name = models.CharField(max_length=20)
@@ -8,7 +9,7 @@ class Publisher(models.Model):
 class Product(models.Model):
     title = models.CharField(max_length=70)
     author = models.CharField(max_length=70)
-    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     year = models.CharField(max_length=4)
     stock = models.IntegerField()
     price = models.IntegerField()

@@ -7,12 +7,12 @@ from rest_framework.validators import UniqueValidator
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model =  Product
-        fields = ['id', 'title', 'publisher', 'author','year', 'price','stock']
+        fields = ['id', 'title', 'seller', 'author','year', 'price','stock']
     
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
         instance.author = validated_data.get('author', instance.author)
-        instance.publisher = validated_data.get('publisher', instance.publisher)
+        instance.seller = validated_data.get('seller', instance.seller)
         instance.year = validated_data.get('year', instance.year)
         instance.stock = validated_data.get('stock', instance.stock)
         instance.price = validated_data.get('price', instance.price) 
@@ -24,16 +24,15 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ProductRegisterSerializer(serializers.ModelSerializer):
     title = serializers.CharField(write_only=True, required=True)
-    seller = serializers.IntegerField(write_only=True, required=True)
     author = serializers.CharField(write_only=True, required=True)
-    publisher = serializers.IntegerField(write_only=True, required=True)
+    seller = serializers.IntegerField(write_only=True, required=True)
     year = serializers.CharField()
     stock = serializers.IntegerField(write_only=True, required=True)
     price = serializers.IntegerField(write_only=True, required=True)
 
     class Meta:
         model = Product
-        fields = ('title','author', 'publisher', 'year','stock', 'price')
+        fields = ('title','author', 'seller', 'year','stock', 'price')
         extra_kwargs = {
             'stock': {'required': True},
             'price': {'required': True}
@@ -41,15 +40,15 @@ class ProductRegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         for i in Product.objects.all():
-            if attrs['title'] == i.title and attrs['author'] == i.author and attrs['publisher'] == i.publisher:
-                raise serializers.ValidationError({"Product": "It is already a record with this title at the same publisher"})
+            if attrs['title'] == i.title and attrs['author'] == i.author and attrs['seller'] == i.seller:
+                raise serializers.ValidationError({"Product": "It is already a record with this title at the same seller"})
         return attrs
 
     def create(self, validated_data):
         product = Product.objects.create( 
             title=validated_data['title'],
             author=validated_data['author'],
-            publisher=validated_data['publisher'],
+            seller=validated_data['seller'],
             year = validated_data['year'],
             stock = validated_data['stock'],
             price = validated_data['price']
