@@ -9,8 +9,8 @@ from administrator.models import Administrator
 from customer.models import Customer
 from customer.permissions import CustomersPermission
 from customer.serializers import CustomerSerializer, CustomerSerializer
-from library_manager.models import Book
-from library_manager.serializer import BookSerializer
+from library_manager.models import Product
+from library_manager.serializer import ProductSerializer
 
 
 class CreateCustomerView(ListCreateAPIView):

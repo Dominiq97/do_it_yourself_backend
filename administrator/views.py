@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 from administrator.models import Administrator
 from administrator.permissions import AdministratorsPermission
 from administrator.serializers import AdministratorSerializer
-from library_manager.models import Book
-from library_manager.serializer import BookSerializer
+from library_manager.models import Product
+from library_manager.serializer import ProductSerializer
 
 
 class AdministratorCreate(CreateAPIView):

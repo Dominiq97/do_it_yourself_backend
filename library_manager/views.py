@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
 from rest_framework.views import APIView
-from library_manager.models import Book
+from library_manager.models import Product
 from rest_framework.parsers import JSONParser
-from library_manager.serializer import PublisherSerializer, BookSerializer, BookRegisterSerializer
+from library_manager.serializer import ProductSerializer, ProductRegisterSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from administrator.permissions import AdministratorsPermission
 from customer.permissions import CustomersPermission
@@ -21,55 +21,55 @@ title = openapi.Parameter('title', in_=openapi.IN_QUERY,
 FETCH_PUBLISHER_SUCCESS = '''{{
     "name": <publisher name>,
     "address": <publisher address>,
-    "book": [
+    "product": [
         {
-            "title": <book name>,
+            "title": <product name>,
             "publisher": <publisher id>
         }
     ]
 }}'''
 
 FETCH_BOOK_SUCCESS = '''{{
-    "title": <book title>,
-    "author": <book author>,
+    "title": <product title>,
+    "author": <product author>,
 }}'''
 
 
-class BookAdministrator(UpdateAPIView):
-    serializer_class = BookSerializer
-    queryset = Book.objects.all()
+class ProductAdministrator(UpdateAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
     permission_classes = [IsAuthenticated, AdministratorsPermission]
 
     def delete(self, request, pk):
-        book = get_object_or_404(Book, id=pk)
-        book.delete()
-        return Response({"status": "success", "data": "Book Deleted"})
+        product = get_object_or_404(Product, id=pk)
+        product.delete()
+        return Response({"status": "success", "data": "Product Deleted"})
         
     def put(self, request, pk):
-        book = get_object_or_404(Book.objects.all(), id = pk)
-        data = request.data.get('book')
-        serializer = BookSerializer(instance=book, data=data, partial=True)
+        product = get_object_or_404(Product.objects.all(), id = pk)
+        data = request.data.get('product')
+        serializer = ProductSerializer(instance=product, data=data, partial=True)
         if serializer.is_valid():
-            book = serializer.save()
-        return Response({"success": "Book '{}' is updated".format(book.title)})
+            product = serializer.save()
+        return Response({"success": "Product '{}' is updated".format(product.title)})
 
 
-class BookListView(ListCreateAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
+class ProductListView(ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
     permission_classes = (AdministratorsPermission|CustomersPermission,)
     def get_queryset(self):
         title = self.request.query_params.get("title", None)
         author = self.request.query_params.get("author", None)
         publisher = self.request.query_params.get("publisher", None)
         if title:
-            qs = Book.objects.filter(title__icontains=title)
+            qs = Product.objects.filter(title__icontains=title)
             return qs
         if author:
-            qs = Book.objects.filter(author__icontains=author)
+            qs = Product.objects.filter(author__icontains=author)
             return qs
         if publisher:
-            qs = Book.objects.filter(publisher__name__icontains=publisher)
+            qs = Product.objects.filter(publisher__name__icontains=publisher)
             return qs
 
         return super().get_queryset()

@@ -5,7 +5,7 @@ class Publisher(models.Model):
     address = models.CharField(max_length=100)
 
 
-class Book(models.Model):
+class Product(models.Model):
     title = models.CharField(max_length=70)
     author = models.CharField(max_length=70)
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)

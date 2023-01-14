@@ -24,7 +24,7 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Elibrary, but legal",
         default_version='v1',
-        description="Online library for lazy people but for bookworms",
+        description="Online library for lazy people but for productworms",
     ),
     public=True,
 )
