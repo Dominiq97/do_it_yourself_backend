@@ -7,9 +7,9 @@ from django.http.response import JsonResponse
 from rest_framework.views import APIView
 from library_manager.models import Product
 from rest_framework.parsers import JSONParser
-from library_manager.serializer import ProductSerializer, ProductRegisterSerializer
+from library_manager.serializer import ProductSerializer, ProductRegisterSerializer  
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from administrator.permissions import AdministratorsPermission
+from seller.permissions import SellerPermission
 from customer.permissions import CustomersPermission
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -35,10 +35,10 @@ FETCH_BOOK_SUCCESS = '''{{
 }}'''
 
 
-class ProductAdministrator(UpdateAPIView):
+class ProductSeller(UpdateAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
-    permission_classes = [IsAuthenticated, AdministratorsPermission]
+    permission_classes = [IsAuthenticated, SellerPermission]
 
     def delete(self, request, pk):
         product = get_object_or_404(Product, id=pk)
@@ -57,7 +57,7 @@ class ProductAdministrator(UpdateAPIView):
 class ProductListView(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = (AdministratorsPermission|CustomersPermission,)
+    permission_classes = (SellerPermission|CustomersPermission,)
     def get_queryset(self):
         title = self.request.query_params.get("title", None)
         author = self.request.query_params.get("author", None)

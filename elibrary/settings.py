@@ -51,9 +51,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'account',
-    'administrator',
     'customer',
-    
+    'seller',
+    'administrator',
 ]
 
 from datetime import timedelta

@@ -34,6 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('', include('customer.urls')),
+    path('', include('seller.urls')),
     path('', include('administrator.urls')),
     path('login/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
