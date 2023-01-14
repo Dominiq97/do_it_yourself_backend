@@ -16,5 +16,5 @@ from administrator.permissions import AdministratorsPermission
 class SellerCreate(CreateAPIView):
     queryset = Seller.objects.all()
     serializer_class = SellerSerializer
-    permission_classes = (IsAuthenticated, AdministratorsPermission)
+    permission_classes = (AllowAny, )
 

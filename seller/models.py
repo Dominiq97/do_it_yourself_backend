@@ -8,6 +8,7 @@ from account.models import User
 
 class Seller(User):
     user = models.OneToOneField(to=User, parent_link=True, related_name='seller', on_delete=models.CASCADE)
+    is_valid = models.BooleanField(default=False)
 
     def __str__(self):
         return super(Seller, self).__str__()

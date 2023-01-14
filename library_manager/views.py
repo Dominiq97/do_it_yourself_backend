@@ -11,6 +11,7 @@ from library_manager.serializer import ProductSerializer, ProductRegisterSeriali
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from seller.permissions import SellerPermission
 from customer.permissions import CustomersPermission
+from administrator.permissions import AdministratorsPermission
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, ListCreateAPIView
@@ -38,7 +39,8 @@ FETCH_BOOK_SUCCESS = '''{{
 class ProductSeller(UpdateAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
-    permission_classes = [IsAuthenticated, SellerPermission]
+    permission_classes = (IsAuthenticated, AdministratorsPermission)
+    
 
     def delete(self, request, pk):
         product = get_object_or_404(Product, id=pk)
@@ -57,7 +59,7 @@ class ProductSeller(UpdateAPIView):
 class ProductListView(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = (SellerPermission|CustomersPermission,)
+    permission_classes = (IsAuthenticated, SellerPermission|CustomersPermission|AdministratorsPermission)
     def get_queryset(self):
         title = self.request.query_params.get("title", None)
         author = self.request.query_params.get("author", None)
