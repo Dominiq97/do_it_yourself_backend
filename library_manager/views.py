@@ -39,7 +39,7 @@ FETCH_BOOK_SUCCESS = '''{{
 class ProductSeller(UpdateAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
-    permission_classes = (IsAuthenticated, AdministratorsPermission)
+    permission_classes = (IsAuthenticated, SellerPermission, )
     
 
     def delete(self, request, pk):
@@ -59,7 +59,7 @@ class ProductSeller(UpdateAPIView):
 class ProductListView(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = (IsAuthenticated, SellerPermission|CustomersPermission|AdministratorsPermission)
+    permission_classes = (IsAuthenticated, SellerPermission|AdministratorsPermission, )
     def get_queryset(self):
         title = self.request.query_params.get("title", None)
         author = self.request.query_params.get("author", None)
