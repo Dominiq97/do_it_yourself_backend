@@ -1,19 +1,18 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from library_manager.models import Publisher, Product
+from library_manager.models import Product
 from rest_framework.validators import UniqueValidator
 
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model =  Product
-        fields = ['id', 'title', 'seller', 'author','year', 'price','stock']
+        fields = ['id', 'name', 'barcode', 'seller', 'price', 'stock']
     
     def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.author = validated_data.get('author', instance.author)
+        instance.name = validated_data.get('name', instance.name)
+        instance.barcode = validated_data.get('barcode', instance.barcode)
         instance.seller = validated_data.get('seller', instance.seller)
-        instance.year = validated_data.get('year', instance.year)
         instance.stock = validated_data.get('stock', instance.stock)
         instance.price = validated_data.get('price', instance.price) 
         instance.save()
@@ -23,16 +22,15 @@ class ProductSerializer(serializers.ModelSerializer):
         return Product.objects.create(**validated_data)
 
 class ProductRegisterSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(write_only=True, required=True)
-    author = serializers.CharField(write_only=True, required=True)
+    name = serializers.CharField(write_only=True, required=True)
+    barcode = serializers.CharField(write_only=True, required=True)
     seller = serializers.IntegerField(write_only=True, required=True)
-    year = serializers.CharField()
     stock = serializers.IntegerField(write_only=True, required=True)
     price = serializers.IntegerField(write_only=True, required=True)
 
     class Meta:
         model = Product
-        fields = ('title','author', 'seller', 'year','stock', 'price')
+        fields = ('name','author', 'seller', 'year','stock', 'price')
         extra_kwargs = {
             'stock': {'required': True},
             'price': {'required': True}
@@ -40,16 +38,15 @@ class ProductRegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         for i in Product.objects.all():
-            if attrs['title'] == i.title and attrs['author'] == i.author and attrs['seller'] == i.seller:
-                raise serializers.ValidationError({"Product": "It is already a record with this title at the same seller"})
+            if attrs['name'] == i.name and attrs['barcode'] == i.barcode and attrs['seller'] == i.seller:
+                raise serializers.ValidationError({"Product": "It is already a record with this product at the same seller"})
         return attrs
 
-    def create(self, validated_data):
+    def create(self, request, validated_data):
         product = Product.objects.create( 
-            title=validated_data['title'],
-            author=validated_data['author'],
-            seller=validated_data['seller'],
-            year = validated_data['year'],
+            name=validated_data['name'],
+            barcode=validated_data['barcode'],
+            seller= request.user.id,
             stock = validated_data['stock'],
             price = validated_data['price']
 
@@ -57,4 +54,8 @@ class ProductRegisterSerializer(serializers.ModelSerializer):
         product.save()
         return product
 
+class ProductPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =  Product
+        fields = ['id', 'name', 'barcode', 'seller', 'price', 'stock']
     

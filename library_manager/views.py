@@ -7,7 +7,7 @@ from django.http.response import JsonResponse
 from rest_framework.views import APIView
 from library_manager.models import Product
 from rest_framework.parsers import JSONParser
-from library_manager.serializer import ProductSerializer, ProductRegisterSerializer  
+from library_manager.serializer import ProductSerializer, ProductRegisterSerializer, ProductPublicSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from seller.permissions import SellerPermission
 from customer.permissions import CustomersPermission
@@ -72,6 +72,22 @@ class ProductListView(ListCreateAPIView):
             return qs
         if publisher:
             qs = Product.objects.filter(publisher__name__icontains=publisher)
+            return qs
+
+        return super().get_queryset()
+
+class PublicProducts(ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductPublicSerializer
+    permission_classes = (AllowAny, )
+    def get_queryset(self):
+        name = self.request.query_params.get("name", None)
+        seller = self.request.query_params.get("seller", None)
+        if name:
+            qs = Product.objects.filter(name__icontains=name)
+            return qs
+        if seller:
+            qs = Product.objects.filter(seller__first_name__icontains=seller)
             return qs
 
         return super().get_queryset()
